@@ -9,10 +9,48 @@ let sortByOptions = {
 
 class SearchBar extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      term: '',
+      location: '',
+      sortBy: 'best_match'
+    };
+    this.handleTermChange = this.handleTermChange.bind(this);
+    this.handleTermChange = this.handleLocationChange.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
+  getSortByClass(sortByOption) {
+    if (this.state.sortBy === sortByOption) {
+      return 'active';
+    } else {
+      return '';
+    }
+  }
+
+  handleSortByChange(sortByOption){
+    this.setState({sortBy: sortByOption});
+  }
+
+  handleTermChange(event) {
+    this.setState({term: event.target.value});
+  }
+
+  handleLocationChange(event) {
+    this.setState({location: event.target.value});
+  }
+
+  handleSearch(event) {
+    this.props.searchYelp(this.state.term, this.state.location, this.state.sortBy);
+    event.preventDefault(); //to prevent the default action of clicking a link from triggering at the end of the method.
+  }
+
+
   renderSortByOptions() {
     return Object.keys(sortByOptions).map(sortByOption => {
       let sortByOptionValue = sortByOptions[sortByOption];
-      return <li key={sortByOptionValue}>{sortByOption}</li>;
+      return <li onClick={this.handleSortByChange.bind(this, sortByOptionValue)} className={this.getSortByClass(sortByOptionValue)} key={sortByOptionValue}>{sortByOption}</li>;
     });
   }
 
@@ -25,10 +63,10 @@ class SearchBar extends React.Component {
           </ul>
         </div>
         <div className="SearchBar-fields">
-          <input placeholder="Search Businesses" />
-          <input placeholder="Where?" />
+          <input onChange={this.handleTermChange} placeholder="Search Businesses" />
+          <input onChange={this.handleLocationChange} placeholder="Where?" />
         </div>
-        <div className="SearchBar-submit">
+        <div className="SearchBar-submit" onClick={this.handleSearch}>
           <a>Lets Go</a>
         </div>
       </div>
